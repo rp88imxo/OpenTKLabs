@@ -28,7 +28,7 @@ class Program
             1, 2, 3    // second triangle
         };
 
-        using (var baseWindow = new BaseWindow(800, 600, "OpenGL", new List<IRenderOperation>()
+        using (var baseWindow = new BaseWindow(800, 600, "Labs RML", new List<IRenderOperation>()
                {
                    new TriangleRenderOperation(vertices,
                        new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader")),
