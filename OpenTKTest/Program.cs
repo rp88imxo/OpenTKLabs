@@ -13,6 +13,9 @@ class Program
                    new TriangleRenderOperation(TrianglesData.VerticesTriangleRed,
                        new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader")),
                    new TriangleRenderOperation(TrianglesData.VerticesTriangleGreen,
+                       new DefaultShader("Shaders/vertex.shader", "Shaders/fragment_2.shader")),
+                   new TriangleRenderOperation(TrianglesData.VerticesTriangleBlue,
+                       new DefaultShader("Shaders/vertex.shader", "Shaders/fragment_3.shader")),
                }))
         {
             baseWindow.Run();
