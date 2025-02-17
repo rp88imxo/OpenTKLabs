@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿
+using OpenTK.Graphics.OpenGL;
 using OpenTKTest.Core.Shaders;
 
 namespace OpenTKTest.Core;
@@ -59,6 +60,24 @@ public class TriangleRenderOperation : IRenderOperation
         
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         GL.BindVertexArray(_vertexArrayObject);
-        GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+        
+        // GL.Enable(EnableCap.LineSmooth);
+        
+        GL.PointSize(5);
+        GL.Enable(EnableCap.PointSmooth);
+        
+        // GL.LineWidth(10);
+        
+        //GL.ProvokingVertex(ProvokingVertexMode.FirstVertexConvention);
+        
+        // GL.CullFace(TriangleFace.Front);
+        // GL.Enable(EnableCap.CullFace);
+        //  GL.PolygonMode(TriangleFace.Back, PolygonMode.Line);
+        //  GL.PolygonMode(MaterialFace.Back, PolygonMode.Line);
+        
+        // GL.PolygonMode(MaterialFace.Back, PolygonMode.Line);
+        // GL.PolygonMode(MaterialFace.Front, PolygonMode.Point);
+        
+        GL.DrawArrays(PrimitiveType.Points, 0, 3);
     }
 }
