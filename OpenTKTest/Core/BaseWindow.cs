@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using System.Diagnostics;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -10,6 +11,8 @@ namespace OpenTKTest.Core
     {
         private readonly IList<IRenderOperation> _renderOperations;
 
+        private Stopwatch _timer;
+        
         public BaseWindow(int width, int height, string title, IList<IRenderOperation> renderOperations) : base(GameWindowSettings.Default,
             new NativeWindowSettings()
             {
@@ -17,6 +20,8 @@ namespace OpenTKTest.Core
             })
         {
             _renderOperations = renderOperations;
+            _timer = new Stopwatch();
+            _timer.Start();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -45,9 +50,14 @@ namespace OpenTKTest.Core
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
+            var data = new RenderArgumentsData
+            {
+                TotalTimePassed = _timer.Elapsed.TotalSeconds
+            };
+            
             foreach (var renderOperation in _renderOperations)
             {
-                renderOperation.Render();
+                renderOperation.Render(data);
             }
             
             SwapBuffers();

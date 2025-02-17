@@ -24,9 +24,19 @@ public class DefaultShader : IDisposable
         }
     }
 
-    public void Use()
+    public virtual void Use()
     {
         GL.UseProgram(Handle);
+    }
+
+    public virtual void SetFloat(string name, float value)
+    {
+       var location = GL.GetUniformLocation(Handle, name);
+
+       if (location != -1)
+       {
+           GL.Uniform1(location, value);
+       }
     }
 
     public void Dispose()

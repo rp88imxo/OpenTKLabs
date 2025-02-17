@@ -40,7 +40,7 @@ public class ElementBufferRenderOperation : IRenderOperation
         _defaultShaderToUse.Init();
     }
 
-    public void Render()
+    public void Render(RenderArgumentsData renderArgumentsData)
     {
         _defaultShaderToUse.Use();
         

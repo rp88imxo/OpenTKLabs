@@ -3,5 +3,5 @@
 public interface IRenderOperation
 {
     public void Init();
-    public void Render();
+    public void Render(RenderArgumentsData renderArgumentsData);
 }
