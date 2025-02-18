@@ -5,17 +5,7 @@ using OpenTKTest.Utils.Math;
 
 namespace OpenTKTest.Framework.Subprograms;
 
-public readonly struct TaskOneSubprogramParams
-{
-    public TaskOneSubprogramParams(int sidesCount)
-    {
-        SidesCount = sidesCount;
-    }
-
-    public int SidesCount { get; }
-}
-
-public class TaskOnePointsInPolygonSubprogram : BaseSubprogram
+public class TaskSixNPolygonWithTriangleFanSubprogram : BaseSubprogram
 {
     private readonly TaskOneSubprogramParams _taskOneSubprogramParams;
     private readonly BaseWindow _baseWindow;
@@ -24,7 +14,7 @@ public class TaskOnePointsInPolygonSubprogram : BaseSubprogram
     private DefaultShader _shaderToUse;
     private RenderOperationData _renderOperationData;
 
-    public TaskOnePointsInPolygonSubprogram(TaskOneSubprogramParams taskOneSubprogramParams, BaseWindow baseWindow)
+    public TaskSixNPolygonWithTriangleFanSubprogram(TaskOneSubprogramParams taskOneSubprogramParams, BaseWindow baseWindow)
     {
         _taskOneSubprogramParams = taskOneSubprogramParams;
         _baseWindow = baseWindow;
@@ -36,11 +26,11 @@ public class TaskOnePointsInPolygonSubprogram : BaseSubprogram
 
         _shaderToUse = new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader");
         
-        _renderOperationData = new RenderOperationData(PrimitiveType.Points);
+        _renderOperationData = new RenderOperationData(PrimitiveType.TriangleFan);
         _polygonRenderOperation = new RenderOperation(_polygonPoints.Vertices, _polygonPoints.Colors, _shaderToUse, _renderOperationData);
         _polygonRenderOperation.Init();
         
-        _baseWindow.Title = "RML Labs | Task 1";
+        _baseWindow.Title = "RML Labs | Task 6";
     }
     public override void Render(RenderArgumentsData renderArgumentsData)
     {

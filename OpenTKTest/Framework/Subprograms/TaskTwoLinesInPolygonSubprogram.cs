@@ -22,7 +22,7 @@ public class TaskTwoLinesInPolygonSubprogram : BaseSubprogram
     private readonly TaskTwoSubprogramParams _taskOneSubprogramParams;
     private readonly BaseWindow _baseWindow;
     private RenderOperation _polygonRenderOperation;
-    private ShapeUtils.NPolygonData _polygonPoints;
+    private ShapeUtils.VerticesData _polygonPoints;
     private DefaultShader _shaderToUse;
     private RenderOperationData _renderOperationData;
     
@@ -38,11 +38,11 @@ public class TaskTwoLinesInPolygonSubprogram : BaseSubprogram
     
     public override void Init()
     {
-        _polygonPoints = ShapeUtils.CreateNPolygon(_taskOneSubprogramParams.SidesCount);
+        _polygonPoints = ShapeUtils.CreateNPolygonLines(_taskOneSubprogramParams.SidesCount);
 
         _shaderToUse = new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader");
         
-        _renderOperationData = new RenderOperationData(PrimitiveType.LineLoop);
+        _renderOperationData = new RenderOperationData(PrimitiveType.Lines);
         _polygonRenderOperation = new RenderOperation(_polygonPoints.Vertices, _polygonPoints.Colors, _shaderToUse, _renderOperationData);
         _polygonRenderOperation.Init();
         
