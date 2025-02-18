@@ -1,3 +1,4 @@
+using OpenTK.Windowing.Common;
 using OpenTKTest.Core;
 
 namespace OpenTKTest.Framework.Subprograms;
@@ -15,6 +16,11 @@ public class BaseSubprogram : IBaseSubprogram
     }
     
     public virtual void Render(RenderArgumentsData renderArgumentsData)
+    {
+        
+    }
+
+    public virtual void Update(FrameEventArgs args)
     {
         
     }

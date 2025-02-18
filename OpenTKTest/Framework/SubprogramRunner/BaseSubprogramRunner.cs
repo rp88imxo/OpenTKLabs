@@ -31,13 +31,15 @@ public class BaseSubprogramRunner : IBaseSubprogramRunner
 
     public void Update(FrameEventArgs args)
     {
-        if ( _baseWindow.KeyboardState.IsKeyDown(Keys.Space))
+        if ( _baseWindow.KeyboardState.IsKeyPressed(Keys.Space))
         {
             if (!TryMoveToNextSubprogram())
             {
                 _baseWindow.Close();
             }
         }
+        
+        _activeSubprogram.Update(args);
     }
     
     public virtual void Render(RenderArgumentsData renderArgumentsData)

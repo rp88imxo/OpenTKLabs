@@ -14,7 +14,8 @@ class Program
 
         var programRunner = new BaseSubprogramRunner(new List<IBaseSubprogram>()
         {
-            new BaseSubprogram()
+            new TaskOnePointsInPolygonSubprogram(new TaskOneSubprogramParams(24), baseWindow),
+            new TaskTwoLinesInPolygonSubprogram(new TaskTwoSubprogramParams(24), baseWindow)
         }, baseWindow);
         
         baseWindow.InitRunner(programRunner);
