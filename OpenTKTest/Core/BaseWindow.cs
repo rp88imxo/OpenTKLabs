@@ -4,24 +4,29 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTKTest.Core.Shaders;
+using OpenTKTest.Framework.SubprogramRunner;
 
 namespace OpenTKTest.Core
 {
     public class BaseWindow : GameWindow
     {
-        private readonly IList<IRenderOperation> _renderOperations;
-
+        private IBaseSubprogramRunner _baseSubprogramRunner;
+        
         private Stopwatch _timer;
         
-        public BaseWindow(int width, int height, string title, IList<IRenderOperation> renderOperations) : base(GameWindowSettings.Default,
+        public BaseWindow(int width, int height, string title) : base(GameWindowSettings.Default,
             new NativeWindowSettings()
             {
                 ClientSize = (width, height), Title = title
             })
         {
-            _renderOperations = renderOperations;
             _timer = new Stopwatch();
             _timer.Start();
+        }
+
+        public void InitRunner(IBaseSubprogramRunner baseSubprogramRunner)
+        {
+            _baseSubprogramRunner = baseSubprogramRunner;
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -32,16 +37,15 @@ namespace OpenTKTest.Core
             {
                 Close();
             }
+            
+            _baseSubprogramRunner.Update(args);
         }
 
         protected override void OnLoad()
         {
             base.OnLoad();
             
-            foreach (var renderOperation in _renderOperations)
-            {
-                renderOperation.Init();
-            }
+            _baseSubprogramRunner.Init(this);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -54,12 +58,13 @@ namespace OpenTKTest.Core
             {
                 TotalTimePassed = _timer.Elapsed.TotalSeconds
             };
-            
-            foreach (var renderOperation in _renderOperations)
-            {
-                renderOperation.Render(data);
-            }
-            
+
+            #region RENDER_RUNNER
+
+            _baseSubprogramRunner.Render(data);
+
+            #endregion
+
             SwapBuffers();
         }
 
