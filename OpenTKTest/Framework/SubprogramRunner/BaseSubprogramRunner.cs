@@ -38,6 +38,8 @@ public class BaseSubprogramRunner : IBaseSubprogramRunner
                 _baseWindow.Close();
             }
         }
+        
+        _activeSubprogram.Update(args);
     }
     
     public virtual void Render(RenderArgumentsData renderArgumentsData)
