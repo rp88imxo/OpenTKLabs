@@ -33,7 +33,7 @@ public class TriangleFigureOutputContextData
 public class TriangleFigureOutputContext : FigureOutputContextBase
 {
     private readonly BaseWindow _baseWindow;
-    private RenderOperation _polygonRenderOperation;
+    private IRenderOperation _polygonRenderOperation;
     private DefaultShader _shaderToUse;
     private RenderOperationData _renderOperationData;
     private ShapeUtils.VerticesData _linesPoints;
@@ -51,9 +51,11 @@ public class TriangleFigureOutputContext : FigureOutputContextBase
     {
         _shaderToUse = new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader");
 
+        uint[] indices = new uint[] { 0, 1, 2, 5,6,7 };
+        
         _renderOperationData = new RenderOperationData(_primitiveType);
         _polygonRenderOperation =
-            new RenderOperation(_linesPoints.Vertices, _linesPoints.Colors, _shaderToUse, _renderOperationData);
+            new ElementBufferRenderOperation(_linesPoints.Vertices, _linesPoints.Colors,indices, _shaderToUse, _renderOperationData);
         _polygonRenderOperation.Init();
     }
 
@@ -99,34 +101,34 @@ public class TaskOneNPolygonWithElementBuffer : BaseSubprogram
                 PrimitiveType = PrimitiveType.Triangles
             }),
 
-            new TriangleFigureOutputContext(new TriangleFigureOutputContextData
-            {
-                LinesPoints = ShapeUtils.CreatePoints(new List<Vector2>()
-                {
-                    new Vector2(1472, 424),
-                    new Vector2(1220, 40),
-                    new Vector2(1132, 624),
-                    new Vector2(540, 440),
-                    new Vector2(960, 1080),
-                    new Vector2(1300, 880),
-                    new Vector2(1132, 624),
-                }, ShapeUtils.RandomColorPerTriangleCallback),
-                PrimitiveType = PrimitiveType.TriangleStrip
-            }),
-            
-            new TriangleFigureOutputContext(new TriangleFigureOutputContextData
-            {
-                LinesPoints = ShapeUtils.CreatePoints(new List<Vector2>()
-                {
-                    new Vector2(1132, 624),
-                    new Vector2(1472, 424),
-                    new Vector2(1220, 40),
-                    new Vector2(540, 440),
-                    new Vector2(960, 1080),
-                    new Vector2(1300, 880),
-                }, ShapeUtils.RandomColorPerTriangleCallback),
-                PrimitiveType = PrimitiveType.TriangleFan
-            }),
+            // new TriangleFigureOutputContext(new TriangleFigureOutputContextData
+            // {
+            //     LinesPoints = ShapeUtils.CreatePoints(new List<Vector2>()
+            //     {
+            //         new Vector2(1472, 424),
+            //         new Vector2(1220, 40),
+            //         new Vector2(1132, 624),
+            //         new Vector2(540, 440),
+            //         new Vector2(960, 1080),
+            //         new Vector2(1300, 880),
+            //         new Vector2(1132, 624),
+            //     }, ShapeUtils.RandomColorPerTriangleCallback),
+            //     PrimitiveType = PrimitiveType.TriangleStrip
+            // }),
+            //
+            // new TriangleFigureOutputContext(new TriangleFigureOutputContextData
+            // {
+            //     LinesPoints = ShapeUtils.CreatePoints(new List<Vector2>()
+            //     {
+            //         new Vector2(1132, 624),
+            //         new Vector2(1472, 424),
+            //         new Vector2(1220, 40),
+            //         new Vector2(540, 440),
+            //         new Vector2(960, 1080),
+            //         new Vector2(1300, 880),
+            //     }, ShapeUtils.RandomColorPerTriangleCallback),
+            //     PrimitiveType = PrimitiveType.TriangleFan
+            // }),
         };
 
         _allModesQueue = new Queue<FigureOutputContextBase>(allModes);
