@@ -14,7 +14,7 @@ class Program
 
         var programRunner = new BaseSubprogramRunner(new List<IBaseSubprogram>()
         {
-            new BaseSubprogram()
+            new TestTransformationSubprogram()
         }, baseWindow);
         
         baseWindow.InitRunner(programRunner);
