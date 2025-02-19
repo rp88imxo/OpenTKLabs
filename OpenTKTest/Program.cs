@@ -14,7 +14,7 @@ class Program
 
         var programRunner = new BaseSubprogramRunner(new List<IBaseSubprogram>()
         {
-            new TestTransformationSubprogram()
+            new TaskOneNPolygonWithElementBuffer(baseWindow)
         }, baseWindow);
         
         baseWindow.InitRunner(programRunner);
