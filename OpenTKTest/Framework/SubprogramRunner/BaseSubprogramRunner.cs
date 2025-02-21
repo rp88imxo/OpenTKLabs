@@ -31,7 +31,7 @@ public class BaseSubprogramRunner : IBaseSubprogramRunner
 
     public void Update(FrameEventArgs args)
     {
-        if ( _baseWindow.KeyboardState.IsKeyDown(Keys.Space))
+        if ( _baseWindow.KeyboardState.IsKeyReleased(Keys.Space))
         {
             if (!TryMoveToNextSubprogram())
             {

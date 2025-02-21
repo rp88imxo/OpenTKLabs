@@ -5,12 +5,15 @@ namespace OpenTKTest.Core;
 
 public class RenderOperationData
 {
-    public RenderOperationData(PrimitiveType primitiveType)
+    public RenderOperationData(PrimitiveType primitiveType, Action<RenderArgumentsData>? onPreRender = null)
     {
         PrimitiveType = primitiveType;
+        OnPreRender = onPreRender;
     }
 
     public PrimitiveType PrimitiveType { get; }
+    
+    public Action<RenderArgumentsData>? OnPreRender { get; }
 }
 
 public class RenderOperation : IRenderOperation
@@ -94,6 +97,7 @@ public class RenderOperation : IRenderOperation
         // GL.PolygonMode(MaterialFace.Back, PolygonMode.Line);
         // GL.PolygonMode(MaterialFace.Front, PolygonMode.Point);
 
+        _renderOperationData.OnPreRender?.Invoke(renderArgumentsData);
         GL.DrawArrays(_renderOperationData.PrimitiveType, 0, _vertexCountToRender);
     }
 }

@@ -16,7 +16,7 @@ public class TestTransformationSubprogram : BaseSubprogram
     {
         base.Init();
 
-        _points = ShapeUtils.CreateNPolygon(12);
+        _points = ShapeUtils.CreateNPolygon(12, ShapeUtils.RandomColorPerTriangleCallback);
         _currentShader = new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader");
         _renderOperation = new RenderOperation(_points.Vertices, _points.Colors, _currentShader,
             new RenderOperationData(PrimitiveType.TriangleFan));

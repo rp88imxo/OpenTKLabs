@@ -14,7 +14,9 @@ class Program
 
         var programRunner = new BaseSubprogramRunner(new List<IBaseSubprogram>()
         {
-            new TaskOneNPolygonWithElementBuffer(baseWindow)
+            new TaskOneNPolygonWithElementBuffer(baseWindow),
+            new TaskTwoAffineTransformSubprogram(baseWindow),
+            new TaskThreeFigureWithAffineTransforms(baseWindow)
         }, baseWindow);
         
         baseWindow.InitRunner(programRunner);

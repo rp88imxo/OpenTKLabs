@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL;
 using OpenTKTest.Core.Shaders;
 
 namespace OpenTKTest.Core;
@@ -61,7 +61,7 @@ public class ElementBufferRenderOperation : IRenderOperation
         
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         GL.BindVertexArray(_vertexArrayObject);
-        
-        GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+        _renderOperationData.OnPreRender?.Invoke(renderArgumentsData);
+        GL.DrawElements(_renderOperationData.PrimitiveType, _indices.Length, DrawElementsType.UnsignedInt, 0);
     }
 }

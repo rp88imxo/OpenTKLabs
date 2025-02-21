@@ -84,7 +84,7 @@ public static class ShapeUtils
         return data;
     }
     
-    public static VerticesData CreateNPolygon(int sides)
+    public static VerticesData CreateNPolygon(int sides, Action<float[], int> colorCallback)
     {
         float[] vertices = new float[sides * 3];
         float[] colors = new float[sides * 3];
@@ -96,9 +96,7 @@ public static class ShapeUtils
             vertices[i * 3 + 1] = MathF.Sin(angle);
             vertices[i * 3 + 2] = 0.0f;
             
-            colors[i * 3] = 0.0f;
-            colors[i * 3 + 1] = 1.0f;
-            colors[i * 3 + 2] = 0.0f;
+            colorCallback.Invoke(colors, i);
         }
         
         var data = new VerticesData(vertices, colors);
