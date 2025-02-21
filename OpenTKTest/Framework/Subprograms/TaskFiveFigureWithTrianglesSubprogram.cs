@@ -103,13 +103,12 @@ public class TaskFiveFigureWithTrianglesSubprogram : BaseSubprogram
             {
                 LinesPoints = ShapeUtils.CreatePoints(new List<Vector2>()
                 {
-                    new Vector2(1472, 424),
-                    new Vector2(1220, 40),
-                    new Vector2(1132, 624),
-                    new Vector2(540, 440),
-                    new Vector2(960, 1080),
-                    new Vector2(1300, 880),
-                    new Vector2(1132, 624),
+                    new Vector2(1300, 880),// 5
+                    new Vector2(960, 1080),// 4
+                    new Vector2(1132, 624),// 2
+                    new Vector2(540, 440),// 3
+                    new Vector2(1472, 424), // 0
+                    new Vector2(1220, 40),// 1
                 }, ShapeUtils.RandomColorPerTriangleCallback),
                 PrimitiveType = PrimitiveType.TriangleStrip
             }),
