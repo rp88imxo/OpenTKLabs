@@ -24,7 +24,7 @@ public class TaskFiveSix : BaseSubprogram
     {
         base.Init();
         
-        _currentShader = new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader");
+        _currentShader = new DefaultShader("Shaders/vertex_mvp.shader", "Shaders/fragment.shader");
         InitRenderOperationCube();
     }
 
@@ -205,20 +205,27 @@ public class TaskFiveSix : BaseSubprogram
         
         //GL.DepthFunc(DepthFunction.Less);
 
-        var rotationX = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(30f));
-        var rotationY = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(70f));
-        Matrix4 model = rotationX * rotationY * Matrix4.CreateTranslation(0f,0f, 0f * (float)renderArgumentsData.TotalTimePassed);
+        var rotationX = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(30f ));
+        var rotationY = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(70f));
+        Matrix4 model = rotationX * rotationY;
 
         Matrix4 projection = //Matrix4.Identity; //Matrix4.CreatePerspectiveOffCenter(-10f, 10f, -10f, 10f, 1f, 100);
             Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(125f) , 800f / 600f, 1f, 100f);
+
+        Matrix4 view = Matrix4.LookAt(new Vector3(0.0f, 0.0f, 1.0f), 
+            new Vector3(0.0f, 0.0f, 0.0f),
+            new Vector3(0.0f, 1.0f, 0.0f));
         
         _currentShader.Use();
         
         var transformLocation = GL.GetUniformLocation(_currentShader.Handle, "transform");
-        GL.UniformMatrix4(transformLocation, true, ref model);
+        GL.UniformMatrix4(transformLocation, false, ref model);
         
         var projectionLocation = GL.GetUniformLocation(_currentShader.Handle, "projection");
-        GL.UniformMatrix4(projectionLocation, true, ref projection);
+        GL.UniformMatrix4(projectionLocation, false, ref projection);
+        
+        var viewLocation = GL.GetUniformLocation(_currentShader.Handle, "view");
+        GL.UniformMatrix4(viewLocation, false, ref view);
         
         //GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
         
