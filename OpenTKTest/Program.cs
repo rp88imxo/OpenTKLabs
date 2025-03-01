@@ -14,7 +14,11 @@ class Program
 
         var programRunner = new BaseSubprogramRunner(new List<IBaseSubprogram>()
         {
-            new TestTransformationSubprogram()
+            new TaskOneThreeFiguresSubprogram(),
+            new TaskTwoThreeFiguresWithDepthTest(),
+            new TaskThreeParallelProjectionCube(),
+            new TaskFourCubePerspective(),
+            new TaskFiveSix(baseWindow)
         }, baseWindow);
         
         baseWindow.InitRunner(programRunner);
