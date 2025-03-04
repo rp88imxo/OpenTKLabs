@@ -14,7 +14,7 @@ public class TaskFourCubePerspective : BaseSubprogram
     {
         base.Init();
         
-        _currentShader = new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader");
+        _currentShader = new DefaultShader("Shaders/vertex_mvp.shader", "Shaders/fragment.shader");
         InitRenderOperationCube();
     }
 
@@ -167,6 +167,10 @@ public class TaskFourCubePerspective : BaseSubprogram
 
         Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(5f * (float)renderArgumentsData.TotalTimePassed));
 
+        Matrix4 view = Matrix4.LookAt(new Vector3(0.0f, 0.0f, 2.5f), 
+            new Vector3(0.0f, 0.0f, 0.0f),
+            new Vector3(0.0f, 1.0f, 0.0f));
+        
         Matrix4 projection = //Matrix4.CreatePerspectiveOffCenter(-10f, 10f, -10f, 10f, 1f, 100);
             Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f) , 800f / 600f, 1f, 125f);
         
@@ -177,6 +181,9 @@ public class TaskFourCubePerspective : BaseSubprogram
         
         var projectionLocation = GL.GetUniformLocation(_currentShader.Handle, "projection");
         GL.UniformMatrix4(projectionLocation, true, ref projection);
+        
+        var viewLocation = GL.GetUniformLocation(_currentShader.Handle, "view");
+        GL.UniformMatrix4(viewLocation, false, ref view);
         
         GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
         

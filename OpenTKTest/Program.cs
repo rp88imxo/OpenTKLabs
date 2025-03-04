@@ -18,7 +18,7 @@ class Program
             new TaskTwoThreeFiguresWithDepthTest(),
             new TaskThreeParallelProjectionCube(),
             new TaskFourCubePerspective(),
-            new TaskFiveSix(baseWindow)
+             new TaskFiveSix(baseWindow)
         }, baseWindow);
         
         baseWindow.InitRunner(programRunner);

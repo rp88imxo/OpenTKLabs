@@ -205,14 +205,14 @@ public class TaskFiveSix : BaseSubprogram
         
         //GL.DepthFunc(DepthFunction.Less);
 
-        var rotationX = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(30f ));
-        var rotationY = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(70f));
+        var rotationX = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(30f * (float)renderArgumentsData.TotalTimePassed));
+        var rotationY = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(70f* (float)renderArgumentsData.TotalTimePassed));
         Matrix4 model = rotationX * rotationY;
 
         Matrix4 projection = //Matrix4.Identity; //Matrix4.CreatePerspectiveOffCenter(-10f, 10f, -10f, 10f, 1f, 100);
-            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(125f) , 800f / 600f, 1f, 100f);
+            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(125f) , 800f / 600f, 0.1f, 100f);
 
-        Matrix4 view = Matrix4.LookAt(new Vector3(0.0f, 0.0f, 1.0f), 
+        Matrix4 view = Matrix4.LookAt(new Vector3(0.0f, 0.0f, 2.5f), 
             new Vector3(0.0f, 0.0f, 0.0f),
             new Vector3(0.0f, 1.0f, 0.0f));
         

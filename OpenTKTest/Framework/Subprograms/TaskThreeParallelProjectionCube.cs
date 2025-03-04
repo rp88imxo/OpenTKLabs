@@ -14,7 +14,7 @@ public class TaskThreeParallelProjectionCube : BaseSubprogram
     {
         base.Init();
         
-        _currentShader = new DefaultShader("Shaders/vertex.shader", "Shaders/fragment.shader");
+        _currentShader = new DefaultShader("Shaders/vertex_mvp.shader", "Shaders/fragment.shader");
         InitRenderOperationCube();
     }
 
@@ -164,9 +164,14 @@ public class TaskThreeParallelProjectionCube : BaseSubprogram
         
         GL.Enable(EnableCap.DepthTest);
         //GL.DepthFunc(DepthFunction.Less);
-        
-        Matrix4 model = Matrix4.Identity;
 
+        Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(25f)) *
+                        Matrix4.CreateRotationY(MathHelper.DegreesToRadians(45f));
+
+        Matrix4 view = Matrix4.LookAt(new Vector3(0.0f, 0.0f, 2.5f), 
+            new Vector3(0.0f, 0.0f, 0.0f),
+            new Vector3(0.0f, 1.0f, 0.0f));
+        
         Matrix4 projection =
             Matrix4.CreateOrthographicOffCenter(-0.7f, 0.7f, -0.85f, 0.85f, 3, 10);
         
@@ -177,6 +182,9 @@ public class TaskThreeParallelProjectionCube : BaseSubprogram
         
         var projectionLocation = GL.GetUniformLocation(_currentShader.Handle, "projection");
         GL.UniformMatrix4(projectionLocation, true, ref projection);
+        
+        var viewLocation = GL.GetUniformLocation(_currentShader.Handle, "view");
+        GL.UniformMatrix4(viewLocation, false, ref view);
         
         _renderOperationCube.Render(renderArgumentsData);
     }
