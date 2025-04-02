@@ -74,7 +74,7 @@ public class DefaultShader : IDisposable
         {
             string infoLog = GL.GetShaderInfoLog(vertexShader);
             Console.WriteLine(infoLog);
-            return;
+            //return;
         }
 
         GL.CompileShader(fragmentShader);
