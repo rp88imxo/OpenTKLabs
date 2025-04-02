@@ -38,14 +38,20 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
     private PointLight[] _pointLights = new PointLight[3]; // Используем константу из шейдера
     private SpotLight _spotLight;
 
-    // --- Структуры для uniform'ов ---
-    // (Можно определить их здесь для удобства, хотя они уже есть в шейдере)
+    // --- Новые поля для прямоугольника ---
+    private Texture _rectTexture;
+    private LitMeshRenderOperation _renderOpRect;
+    private Material _rectMaterial;
+    private float _rectRotationX = 0.0f;
+    private TextureMinFilter _currentMinFilter = TextureMinFilter.Nearest; // Начальное значение
+    private bool _minFilterChanged = false; // Флаг для обновления параметра
+    
+    
     private struct Material
     {
-        public Vector3 Ambient;
-        public Vector3 Diffuse;
         public Vector3 Specular;
         public float Shininess;
+        public bool UseTexture;
     }
 
     private struct DirLight
@@ -94,7 +100,7 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
         base.Init();
 
         // --- Рассчет позиций сфер ---
-        _sphereSeparationDistance = _sphereRadius * 4.0f;
+        _sphereSeparationDistance = _sphereRadius * 2.0f;
         _sphere1Pos = new Vector3(-_sphereSeparationDistance / 2.0f, 0.0f, 0.0f);
         _sphere2Pos = new Vector3(_sphereSeparationDistance / 2.0f, 0.0f, 0.0f);
 
@@ -103,32 +109,27 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
         _phongShader.Init();
 
         // --- Генерация геометрии сферы ---
-        // Увеличим количество сегментов для гладкости
         var sphereMeshData = ShapeUtils.CreateSphere(_sphereRadius, 36, 18);
 
-        // --- Создание Render Operations ---
-        _renderOpSphere1 = new LitMeshRenderOperation(sphereMeshData.Vertices, sphereMeshData.Normals, sphereMeshData.Indices, _phongShader);
+        // --- Создание Render Operations для сфер (передаем null для texCoords) ---
+        _renderOpSphere1 = new LitMeshRenderOperation(sphereMeshData.Vertices, sphereMeshData.Normals, null, sphereMeshData.Indices, _phongShader);
         _renderOpSphere1.Init();
-        _renderOpSphere2 = new LitMeshRenderOperation(sphereMeshData.Vertices, sphereMeshData.Normals, sphereMeshData.Indices, _phongShader);
+        _renderOpSphere2 = new LitMeshRenderOperation(sphereMeshData.Vertices, sphereMeshData.Normals, null, sphereMeshData.Indices, _phongShader);
         _renderOpSphere2.Init();
 
-        // --- Настройка материалов (примерные значения) ---
-        // Изумруд (Emerald)
+        // --- Настройка материалов сфер (добавляем UseTexture = false) ---
         _emeraldMaterial = new Material
         {
-            Ambient = new Vector3(0.0215f, 0.1745f, 0.0215f),
-            Diffuse = new Vector3(0.07568f, 0.61424f, 0.07568f),
+            // Ambient и Diffuse теперь не нужны в C# структуре, если шейдер их не использует напрямую
             Specular = new Vector3(0.633f, 0.727811f, 0.633f),
-            Shininess = 0.6f * 128.0f // Shininess в GLSL часто в диапазоне 0-128 или 0-256
+            Shininess = 0.6f * 128.0f,
+            UseTexture = false // <<< ВАЖНО
         };
-
-        // Красный пластик (Red Plastic)
         _redPlasticMaterial = new Material
         {
-            Ambient = new Vector3(0.0f, 0.0f, 0.0f),
-            Diffuse = new Vector3(0.5f, 0.0f, 0.0f),
-            Specular = new Vector3(0.1f, 0.1f, 0.1f),
-            Shininess = 0.25f * 128.0f
+            Specular = new Vector3(0.7f, 0.6f, 0.6f),
+            Shininess = 0.25f * 128.0f,
+            UseTexture = false // <<< ВАЖНО
         };
 
         // --- Настройка источников света ---
@@ -188,6 +189,66 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
             OuterCutOff = MathF.Cos(MathHelper.DegreesToRadians(17.5f)) // Угол внешнего конуса
         };
 
+        // --- Настройка Прямоугольника ---
+        // 1. Загрузка текстуры
+        string texturePath = Path.Combine("Data", "Textures", "wall.jpg"); // Пример пути
+        if (!File.Exists(texturePath))
+        {
+            // Обработка ошибки - текстура не найдена
+            Console.WriteLine($"Error: Texture not found at {Path.GetFullPath(texturePath)}");
+            // Можно использовать текстуру по умолчанию или выбросить исключение
+             _rectTexture = null; // или создать placeholder текстуру
+        }
+        else
+        {
+            _rectTexture = Texture.LoadFromFile(texturePath);
+        }
+
+
+        // 2. Геометрия прямоугольника (плоскость XY, размер 10x10)
+        float rectSize = _sphereSeparationDistance * 1.5f; // Сделаем его пошире
+        float[] rectVertices = {
+            // Позиции           Нормали             Текстурные Координаты
+             rectSize / 2f,  rectSize / 2f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, // Верхний правый
+             rectSize / 2f, -rectSize / 2f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, // Нижний правый
+            -rectSize / 2f, -rectSize / 2f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f, // Нижний левый
+            -rectSize / 2f,  rectSize / 2f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f  // Верхний левый
+        };
+        uint[] rectIndices = {
+            0, 1, 3, // Первый треугольник
+            1, 2, 3  // Второй треугольник
+        };
+
+        // Разделяем данные для LitMeshRenderOperation
+        float[] rVerts = new float[4 * 3];
+        float[] rNorms = new float[4 * 3];
+        float[] rTexCoords = new float[4 * 2];
+        int vIdx = 0, nIdx = 0, tIdx = 0;
+        for (int i = 0; i < 4; ++i) {
+            rVerts[vIdx++] = rectVertices[i*8 + 0];
+            rVerts[vIdx++] = rectVertices[i*8 + 1];
+            rVerts[vIdx++] = rectVertices[i*8 + 2];
+            rNorms[nIdx++] = rectVertices[i*8 + 3];
+            rNorms[nIdx++] = rectVertices[i*8 + 4];
+            rNorms[nIdx++] = rectVertices[i*8 + 5];
+            rTexCoords[tIdx++] = rectVertices[i*8 + 6];
+            rTexCoords[tIdx++] = rectVertices[i*8 + 7];
+        }
+
+
+        // 3. Render Operation для прямоугольника
+        _renderOpRect = new LitMeshRenderOperation(rVerts, rNorms, rTexCoords, rectIndices, _phongShader);
+        _renderOpRect.Init();
+
+        // 4. Материал для прямоугольника
+        _rectMaterial = new Material
+        {
+            Specular = new Vector3(0.1f, 0.1f, 0.1f), // Небольшой блик
+            Shininess = 0.1f * 128.0f,
+            UseTexture = true // <<< ВАЖНО
+        };
+        
+        
         // Установка начального состояния мыши для камеры
         if (_baseWindow.IsFocused)
         {
@@ -245,6 +306,39 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
             front = Vector3.Normalize(front);
         }
         
+        // --- Управление Прямоугольником ---
+        float rotationSpeed = 90.0f * (float)args.Time; // Градусы в секунду
+
+        // Вращение вокруг X
+        if (input.IsKeyDown(Keys.Right))
+        {
+            _rectRotationX += MathHelper.DegreesToRadians(rotationSpeed);
+        }
+        if (input.IsKeyDown(Keys.Left))
+        {
+            _rectRotationX -= MathHelper.DegreesToRadians(rotationSpeed);
+        }
+
+        // Смена фильтрации (используем клавиши 1 и 2)
+        if (input.IsKeyReleased(Keys.D1))
+        {
+            if (_currentMinFilter != TextureMinFilter.Nearest)
+            {
+                _currentMinFilter = TextureMinFilter.Nearest;
+                _minFilterChanged = true;
+                Console.WriteLine("Min Filter: Nearest");
+            }
+        }
+        if (input.IsKeyReleased(Keys.D2))
+        {
+            if (_currentMinFilter != TextureMinFilter.Linear)
+            {
+                _currentMinFilter = TextureMinFilter.Linear;
+                _minFilterChanged = true;
+                Console.WriteLine("Min Filter: Bilinear (LinearMipmapLinear)");
+            }
+        }
+        
         // Обновляем позицию и направление прожектора, если он связан с камерой
         _spotLight.Position = position;
         _spotLight.Direction = front;
@@ -275,36 +369,40 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
         // Позиция камеры
         _phongShader.SetVector3("viewPos", position);
 
-        // Направленный свет
-        _phongShader.SetVector3("dirLight.direction", _dirLight.Direction);
-        _phongShader.SetVector3("dirLight.ambient", _dirLight.Ambient);
-        _phongShader.SetVector3("dirLight.diffuse", _dirLight.Diffuse);
-        _phongShader.SetVector3("dirLight.specular", _dirLight.Specular);
+        SetupLightUniforms();
 
-        // Точечные источники (в цикле)
-        for (int i = 0; i < _pointLights.Length; i++)
+        // --- Обновление фильтра текстуры, если нужно ---
+        if (_minFilterChanged && _rectTexture != null)
         {
-            _phongShader.SetVector3($"pointLights[{i}].position", _pointLights[i].Position);
-            _phongShader.SetVector3($"pointLights[{i}].ambient", _pointLights[i].Ambient);
-            _phongShader.SetVector3($"pointLights[{i}].diffuse", _pointLights[i].Diffuse);
-            _phongShader.SetVector3($"pointLights[{i}].specular", _pointLights[i].Specular);
-            _phongShader.SetFloat($"pointLights[{i}].constant", _pointLights[i].Constant);
-            _phongShader.SetFloat($"pointLights[{i}].linear", _pointLights[i].Linear);
-            _phongShader.SetFloat($"pointLights[{i}].quadratic", _pointLights[i].Quadratic);
+            GL.BindTexture(TextureTarget.Texture2D, _rectTexture.Handle);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)_currentMinFilter);
+            GL.BindTexture(TextureTarget.Texture2D, 0); // Отвязываем
+            _minFilterChanged = false;
+        }
+
+        // --- Рендер Прямоугольника ---
+        if (_renderOpRect != null && _rectTexture != null) // Проверяем, что все создано
+        {
+            // 1. Активируем текстурный юнит и биндим текстуру
+            _rectTexture.Use(TextureUnit.Texture0);
+            _phongShader.SetInt("texture0", 0); // Сообщаем шейдеру использовать TextureUnit 0
+
+            // 2. Устанавливаем материал прямоугольника
+            SetMaterialUniforms(_rectMaterial); // Передаем материал с UseTexture = true
+
+            // 3. Устанавливаем матрицу модели
+            Matrix4 rectModel = Matrix4.CreateRotationX(_rectRotationX)
+                                * Matrix4.CreateTranslation(0.0f, -_sphereRadius - 1.0f, 0.0f); // Располагаем под сферами
+            _phongShader.SetMatrix4("model", rectModel);
+
+            // 4. Рендерим
+            _renderOpRect.Render(renderArgumentsData);
+
+            // 5. Отвязываем текстуру (не обязательно, но хорошая практика)
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
         }
         
-        // Прожектор (SpotLight)
-        _phongShader.SetVector3("spotLight.position", _spotLight.Position);
-        _phongShader.SetVector3("spotLight.direction", _spotLight.Direction);
-        _phongShader.SetVector3("spotLight.ambient", _spotLight.Ambient);
-        _phongShader.SetVector3("spotLight.diffuse", _spotLight.Diffuse);
-        _phongShader.SetVector3("spotLight.specular", _spotLight.Specular);
-        _phongShader.SetFloat("spotLight.cutOff", _spotLight.CutOff);
-        _phongShader.SetFloat("spotLight.outerCutOff", _spotLight.OuterCutOff);
-        _phongShader.SetFloat("spotLight.constant", _spotLight.Constant);
-        _phongShader.SetFloat("spotLight.linear", _spotLight.Linear);
-        _phongShader.SetFloat("spotLight.quadratic", _spotLight.Quadratic);
-
         // --- Рендер Сферы 1 (Изумруд) ---
         Matrix4 model1 = Matrix4.CreateTranslation(_sphere1Pos);
         _phongShader.SetMatrix4("model", model1);
@@ -323,10 +421,44 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
     // Вспомогательный метод для установки uniform'ов материала
     private void SetMaterialUniforms(Material mat)
     {
-        _phongShader.SetVector3("material.ambient", mat.Ambient);
-        _phongShader.SetVector3("material.diffuse", mat.Diffuse);
         _phongShader.SetVector3("material.specular", mat.Specular);
         _phongShader.SetFloat("material.shininess", mat.Shininess);
+        _phongShader.SetBool("material.useTexture", mat.UseTexture); // <<< НОВОЕ
+    }
+    
+    // Вспомогательный метод для установки uniform'ов света
+    private void SetupLightUniforms()
+    {
+        // Направленный свет
+        _phongShader.SetVector3("dirLight.direction", _dirLight.Direction);
+        _phongShader.SetVector3("dirLight.ambient", _dirLight.Ambient);
+        _phongShader.SetVector3("dirLight.diffuse", _dirLight.Diffuse);
+        _phongShader.SetVector3("dirLight.specular", _dirLight.Specular);
+
+        // Точечные источники
+        for (int i = 0; i < _pointLights.Length; i++)
+        {
+            string prefix = $"pointLights[{i}].";
+            _phongShader.SetVector3(prefix + "position", _pointLights[i].Position);
+            _phongShader.SetVector3(prefix + "ambient", _pointLights[i].Ambient);
+            _phongShader.SetVector3(prefix + "diffuse", _pointLights[i].Diffuse);
+            _phongShader.SetVector3(prefix + "specular", _pointLights[i].Specular);
+            _phongShader.SetFloat(prefix + "constant", _pointLights[i].Constant);
+            _phongShader.SetFloat(prefix + "linear", _pointLights[i].Linear);
+            _phongShader.SetFloat(prefix + "quadratic", _pointLights[i].Quadratic);
+        }
+
+        // Прожектор
+        _phongShader.SetVector3("spotLight.position", _spotLight.Position);
+        _phongShader.SetVector3("spotLight.direction", _spotLight.Direction);
+        _phongShader.SetVector3("spotLight.ambient", _spotLight.Ambient);
+        _phongShader.SetVector3("spotLight.diffuse", _spotLight.Diffuse);
+        _phongShader.SetVector3("spotLight.specular", _spotLight.Specular);
+        _phongShader.SetFloat("spotLight.cutOff", _spotLight.CutOff);
+        _phongShader.SetFloat("spotLight.outerCutOff", _spotLight.OuterCutOff);
+        _phongShader.SetFloat("spotLight.constant", _spotLight.Constant);
+        _phongShader.SetFloat("spotLight.linear", _spotLight.Linear);
+        _phongShader.SetFloat("spotLight.quadratic", _spotLight.Quadratic);
     }
 
     // Переопределение Dispose для очистки ресурсов
@@ -336,20 +468,18 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
         {
             if (disposing)
             {
-                // Освободить управляемые ресурсы (например, другие объекты IDisposable)
+                // Освободить управляемые ресурсы
                 _renderOpSphere1?.Dispose();
                 _renderOpSphere2?.Dispose();
+                _renderOpRect?.Dispose(); // <<< Освобождаем рендер прямоугольника
+                _rectTexture?.Dispose(); // <<< Освобождаем текстуру
             }
 
-            // Освободить неуправляемые ресурсы (OpenGL объекты - шейдеры управляются своим Dispose)
-            // VAO/VBO/EBO удаляются в Dispose LitMeshRenderOperation
-            _phongShader?.Dispose(); // Убедимся, что шейдер тоже удален
+            // Освободить неуправляемые ресурсы (шейдер)
+            _phongShader?.Dispose();
 
-            // Восстановить состояние курсора, если нужно
-            if (_baseWindow != null && _baseWindow.CursorState == CursorState.Grabbed)
-            {
-                 _baseWindow.CursorState = CursorState.Normal;
-            }
+            // Восстановить состояние курсора
+            if (_baseWindow != null && _baseWindow.CursorState == CursorState.Grabbed) { /* ... */ }
 
             disposedValue = true;
         }
@@ -407,4 +537,21 @@ public static class ShaderExtensions
              System.Diagnostics.Debug.WriteLine($"Warning: Uniform '{name}' not found in shader.");
         }
     }
+    
+    public static void SetInt(this DefaultShader shader, string name, int value)
+    {
+        GL.UseProgram(shader.Handle);
+        int location = GL.GetUniformLocation(shader.Handle, name);
+        if (location != -1) GL.Uniform1(location, value);
+        else System.Diagnostics.Debug.WriteLine($"Warning: Uniform '{name}' not found.");
+    }
+
+    public static void SetBool(this DefaultShader shader, string name, bool value)
+    {
+        GL.UseProgram(shader.Handle);
+        int location = GL.GetUniformLocation(shader.Handle, name);
+        if (location != -1) GL.Uniform1(location, value ? 1 : 0); // Передаем как int 0 или 1
+        else System.Diagnostics.Debug.WriteLine($"Warning: Uniform '{name}' not found.");
+    }
 }
+

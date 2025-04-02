@@ -7,25 +7,29 @@ public class LitMeshRenderOperation : IRenderOperation, IDisposable
 {
     private readonly float[] _vertices;
     private readonly float[] _normals;
+    private readonly float[] _texCoords;
     private readonly uint[] _indices;
     private readonly DefaultShader _shader;
 
     private int _vertexArrayObject;
     private int _vertexBufferObject;
     private int _normalBufferObject;
+    private int _texCoordBufferObject;
     private int _elementBufferObject;
 
     private bool disposedValue;
 
-    public LitMeshRenderOperation(float[] vertices, float[] normals, uint[] indices, DefaultShader shader)
+   
+    public LitMeshRenderOperation(float[] vertices, float[] normals, float[] texCoords, uint[] indices, DefaultShader shader)
     {
         _vertices = vertices ?? throw new ArgumentNullException(nameof(vertices));
         _normals = normals ?? throw new ArgumentNullException(nameof(normals));
+        _texCoords = texCoords; // Может быть null, если объект не текстурирован
         _indices = indices ?? throw new ArgumentNullException(nameof(indices));
         _shader = shader ?? throw new ArgumentNullException(nameof(shader));
     }
 
-    public void Init()
+     public void Init()
     {
         _vertexArrayObject = GL.GenVertexArray();
         GL.BindVertexArray(_vertexArrayObject);
@@ -44,12 +48,23 @@ public class LitMeshRenderOperation : IRenderOperation, IDisposable
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(1);
 
+        // Texture Coordinate Buffer (Location 2) <<< НОВОЕ
+        if (_texCoords != null && _texCoords.Length > 0) // Только если texCoords предоставлены
+        {
+            _texCoordBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _texCoordBufferObject);
+            GL.BufferData(BufferTarget.ArrayBuffer, _texCoords.Length * sizeof(float), _texCoords, BufferUsageHint.StaticDraw);
+            // Важно: размер компонента 2 (vec2)
+            GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(2);
+        }
+
         // Element Buffer
         _elementBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
 
-        GL.BindVertexArray(0); // Отвязываем VAO
+        GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
     }
@@ -58,21 +73,21 @@ public class LitMeshRenderOperation : IRenderOperation, IDisposable
     {
         GL.BindVertexArray(_vertexArrayObject);
         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
-        GL.BindVertexArray(0); 
+        GL.BindVertexArray(0);
     }
 
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)
         {
-            if (disposing)
-            {
-               
-            }
-            
+            // ... (Освобождение _vertexBufferObject, _normalBufferObject, _elementBufferObject, _vertexArrayObject)
             GL.DeleteBuffer(_vertexBufferObject);
             GL.DeleteBuffer(_normalBufferObject);
             GL.DeleteBuffer(_elementBufferObject);
+            if (_texCoordBufferObject > 0) // <<< Удаляем буфер TexCoord, если он был создан
+            {
+                GL.DeleteBuffer(_texCoordBufferObject);
+            }
             GL.DeleteVertexArray(_vertexArrayObject);
 
             disposedValue = true;
