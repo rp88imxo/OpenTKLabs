@@ -204,11 +204,9 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
             _rectTexture = Texture.LoadFromFile(texturePath);
         }
 
-
-        // 2. Геометрия прямоугольника (плоскость XY, размер 10x10)
-        float rectSize = _sphereSeparationDistance * 1.5f; // Сделаем его пошире
+        
+        float rectSize = _sphereSeparationDistance * 1.5f;
         float[] rectVertices = {
-            // Позиции           Нормали             Текстурные Координаты
              rectSize / 2f,  rectSize / 2f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, // Верхний правый
              rectSize / 2f, -rectSize / 2f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, // Нижний правый
             -rectSize / 2f, -rectSize / 2f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f, // Нижний левый
@@ -392,7 +390,7 @@ public class PhongLightingTask : BaseSubprogram, IDisposable
 
             // 3. Устанавливаем матрицу модели
             Matrix4 rectModel = Matrix4.CreateRotationX(_rectRotationX)
-                                * Matrix4.CreateTranslation(0.0f, -_sphereRadius - 1.0f, 0.0f); // Располагаем под сферами
+                                * Matrix4.CreateTranslation(0.0f, -_sphereRadius - 5.0f, 0.0f); // Располагаем под сферами
             _phongShader.SetMatrix4("model", rectModel);
 
             // 4. Рендерим
