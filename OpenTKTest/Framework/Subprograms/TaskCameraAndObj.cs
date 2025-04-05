@@ -70,32 +70,32 @@ public class TaskCameraAndObj : BaseSubprogram
         
         if (input.IsKeyDown(Keys.W))
         {
-            position += front * speed * (float)args.Time; //Forward 
+            position += front * speed * (float)args.Time; 
         }
 
         if (input.IsKeyDown(Keys.S))
         {
-            position -= front * speed* (float)args.Time; //Backwards
+            position -= front * speed* (float)args.Time; 
         }
 
         if (input.IsKeyDown(Keys.A))
         {
-            position -= Vector3.Normalize(Vector3.Cross(front, up)) * speed* (float)args.Time; //Left
+            position -= Vector3.Normalize(Vector3.Cross(front, up)) * speed* (float)args.Time; 
         }
 
         if (input.IsKeyDown(Keys.D))
         {
-            position += Vector3.Normalize(Vector3.Cross(front, up)) * speed* (float)args.Time; //Right
+            position += Vector3.Normalize(Vector3.Cross(front, up)) * speed* (float)args.Time; 
         }
 
         if (input.IsKeyDown(Keys.Space))
         {
-            position += up * speed* (float)args.Time; //Up 
+            position += up * speed* (float)args.Time; 
         }
 
         if (input.IsKeyDown(Keys.LeftShift))
         {
-            position -= up * speed* (float)args.Time; //Down
+            position -= up * speed* (float)args.Time; 
         }
 
         #region MOUSE_INPUT
@@ -165,7 +165,7 @@ public class TaskCameraAndObj : BaseSubprogram
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         UpdateMode();
         
-        //GL.DepthFunc(DepthFunction.Less);
+        
 
         var rotationX = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(30f * (float)renderArgumentsData.TotalTimePassed));
         var rotationY = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(-70f* (float)renderArgumentsData.TotalTimePassed));
@@ -174,7 +174,7 @@ public class TaskCameraAndObj : BaseSubprogram
         
         Matrix4 model = translation  * rotationY;
 
-        Matrix4 projection = //Matrix4.Identity; //Matrix4.CreatePerspectiveOffCenter(-10f, 10f, -10f, 10f, 1f, 100);
+        Matrix4 projection = 
             Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f) , 800f / 600f, 0.1f, 10f);
 
         Matrix4 view = Matrix4.LookAt(position, position + front, up);
@@ -190,7 +190,7 @@ public class TaskCameraAndObj : BaseSubprogram
         var viewLocation = GL.GetUniformLocation(_currentShader.Handle, "view");
         GL.UniformMatrix4(viewLocation, false, ref view);
         
-        //GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+        
         
         _renderOperationShip.Render(renderArgumentsData);
     }

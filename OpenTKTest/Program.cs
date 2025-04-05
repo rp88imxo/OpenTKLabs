@@ -14,7 +14,7 @@ class Program
 
         var programRunner = new BaseSubprogramRunner(new List<IBaseSubprogram>()
         {
-            new PhongLightingTask(baseWindow)
+            new TaskCameraAndObj(baseWindow)
         }, baseWindow);
         
         baseWindow.InitRunner(programRunner);

@@ -62,47 +62,47 @@ public class TaskThreeParallelProjectionCube : BaseSubprogram
             0.5f,  0.5f,  0.5f,  
             -0.5f,  0.5f,  0.5f, 
             -0.5f,  0.5f, -0.5f,
-            // -1f, -1f, -1f, 
-            // 1f, -1f, -1f,  
-            // 1f,  1f, -1f,  
-            // 1f,  1f, -1f,  
-            // -1f,  1f, -1f, 
-            // -1f, -1f, -1f, 
-            //
-            // -1f, -1f,  1f, 
-            // 1f, -1f,  1f,  
-            // 1f,  1f,  1f,  
-            // 1f,  1f,  1f,  
-            // -1f,  1f,  1f, 
-            // -1f, -1f,  1f, 
-            //
-            // -1f,  1f,  1f, 
-            // -1f,  1f, -1f, 
-            // -1f, -1f, -1f, 
-            // -1f, -1f, -1f, 
-            // -1f, -1f,  1f, 
-            // -1f,  1f,  1f, 
-            //
-            // 1f,  1f,  1f,  
-            // 1f,  1f, -1f,  
-            // 1f, -1f, -1f,  
-            // 1f, -1f, -1f,  
-            // 1f, -1f,  1f,  
-            // 1f,  1f,  1f,  
-            //
-            // -1f, -1f, -1f, 
-            // 1f, -1f, -1f,  
-            // 1f, -1f,  1f,  
-            // 1f, -1f,  1f,  
-            // -1f, -1f,  1f, 
-            // -1f, -1f, -1f, 
-            //
-            // -1f,  1f, -1f, 
-            // 1f,  1f, -1f,  
-            // 1f,  1f,  1f,  
-            // 1f,  1f,  1f,  
-            // -1f,  1f,  1f, 
-            // -1f,  1f, -1f, 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         };
         
         var colors = new float[]
@@ -163,7 +163,7 @@ public class TaskThreeParallelProjectionCube : BaseSubprogram
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         
         GL.Enable(EnableCap.DepthTest);
-        //GL.DepthFunc(DepthFunction.Less);
+        
 
         Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(25f)) *
                         Matrix4.CreateRotationY(MathHelper.DegreesToRadians(45f));
