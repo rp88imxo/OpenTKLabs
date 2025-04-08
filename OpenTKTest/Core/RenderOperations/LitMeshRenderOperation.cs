@@ -24,7 +24,7 @@ public class LitMeshRenderOperation : IRenderOperation, IDisposable
     {
         _vertices = vertices ?? throw new ArgumentNullException(nameof(vertices));
         _normals = normals ?? throw new ArgumentNullException(nameof(normals));
-        _texCoords = texCoords; // Может быть null, если объект не текстурирован
+        _texCoords = texCoords; 
         _indices = indices ?? throw new ArgumentNullException(nameof(indices));
         _shader = shader ?? throw new ArgumentNullException(nameof(shader));
     }
@@ -34,32 +34,32 @@ public class LitMeshRenderOperation : IRenderOperation, IDisposable
         _vertexArrayObject = GL.GenVertexArray();
         GL.BindVertexArray(_vertexArrayObject);
 
-        // Vertex Buffer (Location 0)
+        
         _vertexBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
 
-        // Normal Buffer (Location 1)
+        
         _normalBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, _normalBufferObject);
         GL.BufferData(BufferTarget.ArrayBuffer, _normals.Length * sizeof(float), _normals, BufferUsageHint.StaticDraw);
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(1);
 
-        // Texture Coordinate Buffer (Location 2) <<< НОВОЕ
-        if (_texCoords != null && _texCoords.Length > 0) // Только если texCoords предоставлены
+        
+        if (_texCoords != null && _texCoords.Length > 0) 
         {
             _texCoordBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, _texCoordBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, _texCoords.Length * sizeof(float), _texCoords, BufferUsageHint.StaticDraw);
-            // Важно: размер компонента 2 (vec2)
+            
             GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
             GL.EnableVertexAttribArray(2);
         }
 
-        // Element Buffer
+        
         _elementBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
@@ -80,11 +80,11 @@ public class LitMeshRenderOperation : IRenderOperation, IDisposable
     {
         if (!disposedValue)
         {
-            // ... (Освобождение _vertexBufferObject, _normalBufferObject, _elementBufferObject, _vertexArrayObject)
+            
             GL.DeleteBuffer(_vertexBufferObject);
             GL.DeleteBuffer(_normalBufferObject);
             GL.DeleteBuffer(_elementBufferObject);
-            if (_texCoordBufferObject > 0) // <<< Удаляем буфер TexCoord, если он был создан
+            if (_texCoordBufferObject > 0) 
             {
                 GL.DeleteBuffer(_texCoordBufferObject);
             }

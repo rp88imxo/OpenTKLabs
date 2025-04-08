@@ -62,47 +62,47 @@ public class TaskFourCubePerspective : BaseSubprogram
             0.5f,  0.5f,  0.5f,  
             -0.5f,  0.5f,  0.5f, 
             -0.5f,  0.5f, -0.5f,
-            // -1f, -1f, -1f, 
-            // 1f, -1f, -1f,  
-            // 1f,  1f, -1f,  
-            // 1f,  1f, -1f,  
-            // -1f,  1f, -1f, 
-            // -1f, -1f, -1f, 
-            //
-            // -1f, -1f,  1f, 
-            // 1f, -1f,  1f,  
-            // 1f,  1f,  1f,  
-            // 1f,  1f,  1f,  
-            // -1f,  1f,  1f, 
-            // -1f, -1f,  1f, 
-            //
-            // -1f,  1f,  1f, 
-            // -1f,  1f, -1f, 
-            // -1f, -1f, -1f, 
-            // -1f, -1f, -1f, 
-            // -1f, -1f,  1f, 
-            // -1f,  1f,  1f, 
-            //
-            // 1f,  1f,  1f,  
-            // 1f,  1f, -1f,  
-            // 1f, -1f, -1f,  
-            // 1f, -1f, -1f,  
-            // 1f, -1f,  1f,  
-            // 1f,  1f,  1f,  
-            //
-            // -1f, -1f, -1f, 
-            // 1f, -1f, -1f,  
-            // 1f, -1f,  1f,  
-            // 1f, -1f,  1f,  
-            // -1f, -1f,  1f, 
-            // -1f, -1f, -1f, 
-            //
-            // -1f,  1f, -1f, 
-            // 1f,  1f, -1f,  
-            // 1f,  1f,  1f,  
-            // 1f,  1f,  1f,  
-            // -1f,  1f,  1f, 
-            // -1f,  1f, -1f, 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         };
         
         var colors = new float[]
@@ -163,7 +163,7 @@ public class TaskFourCubePerspective : BaseSubprogram
         GL.Enable(EnableCap.DepthTest);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
       
-        //GL.DepthFunc(DepthFunction.Less);
+        
 
         Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(5f * (float)renderArgumentsData.TotalTimePassed));
 
@@ -171,7 +171,7 @@ public class TaskFourCubePerspective : BaseSubprogram
             new Vector3(0.0f, 0.0f, 0.0f),
             new Vector3(0.0f, 1.0f, 0.0f));
         
-        Matrix4 projection = //Matrix4.CreatePerspectiveOffCenter(-10f, 10f, -10f, 10f, 1f, 100);
+        Matrix4 projection = 
             Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f) , 800f / 600f, 1f, 125f);
         
         _currentShader.Use();

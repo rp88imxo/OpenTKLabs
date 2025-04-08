@@ -72,47 +72,47 @@ public class TaskFiveSix : BaseSubprogram
             0.5f,  0.5f,  0.5f,  
             -0.5f,  0.5f,  0.5f, 
             -0.5f,  0.5f, -0.5f,
-            // -1f, -1f, -1f, 
-            // 1f, -1f, -1f,  
-            // 1f,  1f, -1f,  
-            // 1f,  1f, -1f,  
-            // -1f,  1f, -1f, 
-            // -1f, -1f, -1f, 
-            //
-            // -1f, -1f,  1f, 
-            // 1f, -1f,  1f,  
-            // 1f,  1f,  1f,  
-            // 1f,  1f,  1f,  
-            // -1f,  1f,  1f, 
-            // -1f, -1f,  1f, 
-            //
-            // -1f,  1f,  1f, 
-            // -1f,  1f, -1f, 
-            // -1f, -1f, -1f, 
-            // -1f, -1f, -1f, 
-            // -1f, -1f,  1f, 
-            // -1f,  1f,  1f, 
-            //
-            // 1f,  1f,  1f,  
-            // 1f,  1f, -1f,  
-            // 1f, -1f, -1f,  
-            // 1f, -1f, -1f,  
-            // 1f, -1f,  1f,  
-            // 1f,  1f,  1f,  
-            //
-            // -1f, -1f, -1f, 
-            // 1f, -1f, -1f,  
-            // 1f, -1f,  1f,  
-            // 1f, -1f,  1f,  
-            // -1f, -1f,  1f, 
-            // -1f, -1f, -1f, 
-            //
-            // -1f,  1f, -1f, 
-            // 1f,  1f, -1f,  
-            // 1f,  1f,  1f,  
-            // 1f,  1f,  1f,  
-            // -1f,  1f,  1f, 
-            // -1f,  1f, -1f, 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         };
         
         var colors = new float[]
@@ -203,13 +203,13 @@ public class TaskFiveSix : BaseSubprogram
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         UpdateMode();
         
-        //GL.DepthFunc(DepthFunction.Less);
+        
 
         var rotationX = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(30f * (float)renderArgumentsData.TotalTimePassed));
         var rotationY = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(70f* (float)renderArgumentsData.TotalTimePassed));
         Matrix4 model = rotationX * rotationY;
 
-        Matrix4 projection = //Matrix4.Identity; //Matrix4.CreatePerspectiveOffCenter(-10f, 10f, -10f, 10f, 1f, 100);
+        Matrix4 projection = 
             Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(125f) , 800f / 600f, 0.1f, 100f);
 
         Matrix4 view = Matrix4.LookAt(new Vector3(0.0f, 0.0f, 2.5f), 
@@ -227,7 +227,7 @@ public class TaskFiveSix : BaseSubprogram
         var viewLocation = GL.GetUniformLocation(_currentShader.Handle, "view");
         GL.UniformMatrix4(viewLocation, false, ref view);
         
-        //GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+        
         
         _renderOperationCube.Render(renderArgumentsData);
     }

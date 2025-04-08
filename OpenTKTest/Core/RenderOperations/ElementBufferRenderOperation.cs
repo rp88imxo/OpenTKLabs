@@ -30,7 +30,7 @@ public class ElementBufferRenderOperation : IRenderOperation
         _vertexArrayObject = GL.GenVertexArray();
         GL.BindVertexArray(_vertexArrayObject);
 
-        // Vertex Buffer
+        
         _vertexBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices,
@@ -39,7 +39,7 @@ public class ElementBufferRenderOperation : IRenderOperation
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
         
-        // Color Buffer
+        
         _colorBuffer = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, _colorBuffer);
         GL.BufferData(BufferTarget.ArrayBuffer, _colors.Length * sizeof(float), _colors, BufferUsageHint.StaticDraw);
@@ -47,7 +47,7 @@ public class ElementBufferRenderOperation : IRenderOperation
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(1);
         
-        // Element Buffer
+        
         _elementBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);

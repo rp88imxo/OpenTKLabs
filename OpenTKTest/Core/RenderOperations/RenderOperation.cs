@@ -43,7 +43,7 @@ public class RenderOperation : IRenderOperation
         GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices,
             BufferUsageHint.StaticDraw);
         
-        // 0 is positionVertexAttribute
+        
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
 
@@ -52,7 +52,7 @@ public class RenderOperation : IRenderOperation
         GL.BufferData(BufferTarget.ArrayBuffer, _colors.Length * sizeof(float), _colors,
             BufferUsageHint.StaticDraw);
         
-        // 1 is colorVertexAttribute
+        
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(1);
 
@@ -63,36 +63,36 @@ public class RenderOperation : IRenderOperation
 
     public void Render(RenderArgumentsData renderArgumentsData)
     {
-        // var colorLocation = GL.GetUniformLocation(_defaultShaderToUse.Handle, "ourColor");
-        //
-        // var timeValue = (float)renderArgumentsData.TotalTimePassed;
-        // var greenValue = (MathF.Sin(timeValue) / 2.0f) + 0.5f;
-        //
         
-        // var bounceValue = MathF.Sin((float)(renderArgumentsData.TotalTimePassed)) * 0.1f;
+        
+        
+        
+        
+        
+        
         _defaultShaderToUse.Use();
-        //_defaultShaderToUse.SetFloat("offsetValue", bounceValue);
-        //
-        // GL.Uniform4(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        
+        
+        
         
         GL.BindVertexArray(_vertexArrayObject);
         
-        // GL.Enable(EnableCap.LineSmooth);
         
-       // GL.PointSize(5);
-        //GL.Enable(EnableCap.PointSmooth);
         
-        // GL.LineWidth(10);
+       
         
-        //GL.ProvokingVertex(ProvokingVertexMode.FirstVertexConvention);
         
-        // GL.CullFace(TriangleFace.Front);
-        // GL.Enable(EnableCap.CullFace);
-        //  GL.PolygonMode(TriangleFace.Back, PolygonMode.Line);
-        //  GL.PolygonMode(MaterialFace.Back, PolygonMode.Line);
         
-        // GL.PolygonMode(MaterialFace.Back, PolygonMode.Line);
-        // GL.PolygonMode(MaterialFace.Front, PolygonMode.Point);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         GL.DrawArrays(_renderOperationData.PrimitiveType, 0, _vertexCountToRender);
     }
